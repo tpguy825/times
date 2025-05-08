@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<style>
+			body {
+				background-color: black;
+				color: #d4d4d8;
+			}
+			input {
+				background-color: #09090b;
+				color: #d4d4d8;
+			}
+			input[type="date"]::-webkit-inner-spin-button,
+			input[type="date"]::-webkit-calendar-picker-indicator {
+				display: block;
+				color: #d4d4d8;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="mx-auto max-w-[100vw]">
+			<div class="m-4 flex h-[5.5rem] sm:h-14 rounded-xl border border-zinc-700 sm:flex-row flex-col">
+				<form id="penis" class="w-full my-auto sm:flex-row sm:flex">
+					<div class="flex flex-row my-auto sm:flex-row w-auto sm:w-full sm:ml-auto">
+						<span class="ml-4 my-auto text-2xl font-semibold min-w-28 w-28">Add item:</span>
+						<input
+							type="text"
+							id="name"
+							placeholder="Name"
+							required
+							class="border-zinc-700 border h-[34px] w-full mr-2 sm:mr-0 block my-auto ml-2 py-1 px-3 rounded-lg" />
+					</div>
+					<div class="flex flex-row sm:flex-row sm:my-auto w-auto mr-2 mt-1">
+						<input
+							type="date"
+							name="date"
+							id="date"
+							required
+							autocomplete="off"
+							value=""
+							class="border-zinc-700 w-full border block my-auto ml-2 py-1 px-3 rounded-lg" />
+						<input
+							type="time"
+							name="time"
+							id="time"
+							required
+							autocomplete="off"
+							value=""
+							class="border-zinc-700 border block my-auto ml-2 py-1 px-3 rounded-lg" />
+						<input
+							type="submit"
+							value="Add"
+							id="add"
+							class="border-zinc-700 border block my-auto ml-2 py-1 px-3 rounded-lg" />
+					</div>
+				</form>
+				<ul class="max-w-3xl mx-auto" id="l"></ul>
+			</div>
+		</div>
+
+		<script>
+			/** @type {HTMLUListElement} */
+			const list = document.getElementById("l");
+			/** @type {({ name: string, time: number })[]} */
+			const items = JSON.parse(localStorage.getItem("items")) || [];
+			setInterval(render, 1000);
+			let lastitems = JSON.stringify(items);
+			function render() {
+				if (lastitems === JSON.stringify(items)) return;
+				list.innerHTML = "";
+				items
+					.sort((a, b) => a.time - b.time)
+					.forEach((item) => {
+						const li = document.createElement("li");
+
+						li.className = "flex h-16 border border-zinc-700 w-full rounded-xl m-4";
+
+						const name = document.createElement("span");
+						name.textContent = item.name;
+						name.className = "my-auto ml-6 font-semibold text-2xl";
+						li.appendChild(name);
+
+						const deleteButton = document.createElement("button");
+						deleteButton.textContent = "Delete";
+						deleteButton.className = "w-6 h-6 mt-[21px] ml-2 p-1";
+						deleteButton.innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-600 w-full h-full">
+							<path d="M3 6h18" />
+							<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+							<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+							<line x1="10" x2="10" y1="11" y2="17" />
+							<line x1="14" x2="14" y1="11" y2="17" />
+							</svg>`;
+						deleteButton.addEventListener("click", () => {
+							const index = items.indexOf(item);
+							if (index > -1) {
+								items.splice(index, 1);
+								localStorage.setItem("items", JSON.stringify(items));
+								list.removeChild(li);
+							}
+						});
+						li.appendChild(deleteButton);
+
+						const time = document.createElement("span");
+						time.className = "bg-zinc-950 rounded-xl my-auto py-2 px-4 ml-auto mr-4 font-bold text-2xl";
+						time.textContent = format(item.itime);
+						time.title = format(item.itime, true);
+						li.appendChild(time);
+
+						list.appendChild(li);
+					});
+			}
+
+			if (location.search) {
+				const params = new URLSearchParams(location.search);
+				if (params.has("imp")) {
+					const data = params
+						.get("imp")
+						.split("|")
+						.map((e) => {
+							const f = e.split(",");
+							return { name: atob(f[0]), itime: f[1] };
+						});
+					if (confirm("Import " + data.length + " items?"))
+						data.forEach((item) => {
+							items.push(item);
+							localStorage.setItem("items", JSON.stringify(items));
+						});
+					location.search = "";
+					render();
+				}
+			}
+
+			function share() {
+				const data = items
+					.map((item) => {
+						return [btoa(item.name), item.itime].join(",");
+					})
+					.join("|");
+				const url = new URL(location.href);
+				url.searchParams.set("imp", data);
+				if (navigator.canShare) {
+					navigator
+						.canShare({ url })
+						.then(() => {
+							navigator.share({ url });
+						})
+						.catch((e) => {
+							alert("Sharing failed: " + e);
+						});
+				} else {
+					const input = document.createElement("input");
+					input.value = url.href;
+					input.style.position = "absolute";
+					input.style.top = "-9999px";
+					input.style.left = "-9999px";
+					input.style.width = "1px";
+					input.style.height = "1px";
+					input.style.opacity = "0";
+					document.body.appendChild(input);
+					input.select();
+					document.execCommand("copy");
+					document.body.removeChild(input);
+					alert("Copied share URL to clipboard");
+				}
+			}
+
+			/** @type {HTMLInputElement} */
+			const nameInput = document.getElementById("name");
+			/** @type {HTMLInputElement} */
+			const dateInput = document.getElementById("date");
+			/** @type {HTMLInputElement} */
+			const timeInput = document.getElementById("time");
+			/** @type {HTMLFormElement} */
+			const form = document.getElementById("penis");
+
+			form.addEventListener("submit", (e) => {
+				e.preventDefault();
+				if (nameInput.value === "" || dateInput.value === "" || timeInput.value === "") return;
+				const name = nameInput.value;
+				const dateTime = new Date();
+				dateTime.setFullYear(dateInput.value.split("-")[0]);
+				dateTime.setMonth(dateInput.value.split("-")[1] - 1);
+				dateTime.setDate(dateInput.value.split("-")[2]);
+				dateTime.setHours(timeInput.value.split(":")[0]);
+				dateTime.setMinutes(timeInput.value.split(":")[1]);
+				dateTime.setSeconds(0);
+				dateTime.setMilliseconds(0);
+				const itime = dateTime.getTime();
+				const item = { name, itime };
+				items.push(item);
+				localStorage.setItem("items", JSON.stringify(items));
+				nameInput.value = "";
+				timeInput.value = "";
+				location.reload();
+			});
+
+			/** @param {number} time */
+			function format(time, full = false) {
+				if (full) return new Date(time).toLocaleString();
+				const date = new Date(time);
+				const now = new Date();
+				if (date.getTime() < Date.now()) {
+					// e.g. 3 mins ago
+					if (now.getFullYear() - date.getFullYear() > 0) {
+						return `${now.getFullYear() - date.getFullYear()} years ago`;
+					} else if (now.getMonth() - date.getMonth() > 0) {
+						return `${now.getMonth() - date.getMonth()} months ago`;
+					} else if (now.getDate() - date.getDate() > 0) {
+						return `${now.getDate() - date.getDate()} days ago`;
+					} else if (now.getHours() - date.getHours() > 0) {
+						return `${now.getHours() - date.getHours()} hours ago`;
+					} else if (now.getMinutes() - date.getMinutes() > 0) {
+						return `${now.getMinutes() - date.getMinutes()} minutes ago`;
+					} else {
+						return "Now";
+					}
+				} else {
+					// e.g. 3 mins later
+					if (date.getFullYear() - now.getFullYear() > 0) {
+						return `${date.getFullYear() - now.getFullYear()} years`;
+					} else if (date.getMonth() - now.getMonth() > 0) {
+						return `${date.getMonth() - now.getMonth()} months`;
+					} else if (date.getDate() - now.getDate() > 0) {
+						return `${date.getDate() - now.getDate()} days`;
+					} else if (date.getHours() - now.getHours() > 0) {
+						return `${date.getHours() - now.getHours()} hours`;
+					} else if (date.getMinutes() - now.getMinutes() > 0) {
+						return `${date.getMinutes() - now.getMinutes()} minutes`;
+					} else {
+						return "Now";
+					}
+				}
+			}
+		</script>
+	</body>
+</html>
