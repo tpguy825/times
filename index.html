@@ -237,7 +237,13 @@
 						return `${date.getFullYear() - now.getFullYear()} year` + (date.getFullYear() - now.getFullYear() > 1 ? "s" : "");
 					} else if (date.getMonth() - now.getMonth() > 1) {
 						return `${date.getMonth() - now.getMonth()} months`;
-					} else if (date.getDate() - now.getDate() > 0) {
+					} else if (date.getMonth() - now.getMonth() === 1) {
+						const days = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes()).getTime();
+						const days2 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes()).getTime();
+						const daysm = (days - days2) / 1000 / 60 / 60 / 24;
+						if (daysm < 2) return `${Math.floor(daysm * 24)} days`;
+						return `${Math.floor(daysm)} days`;
+					} else if ((date.getDate()) - now.getDate() > 0) {
 						return `${date.getDate() - now.getDate()} days`;
 					} else if (date.getHours() - now.getHours() > 0) {
 						return `${date.getHours() - now.getHours()} hours`;
