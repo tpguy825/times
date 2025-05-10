@@ -79,7 +79,7 @@
 				lastitems = JSON.stringify(items);
 				list.innerHTML = "";
 				items
-					.sort((a, b) => a.time - b.time)
+					.sort((a, b) => a.itime - b.itime)
 					.forEach((item) => {
 						const li = document.createElement("li");
 
