@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
-		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="./output.css" />
 		<style>
 			body {
 				background-color: black;
@@ -26,7 +26,7 @@
 			<div class="m-4 flex h-[5.5rem] sm:h-14 rounded-xl border border-zinc-700 sm:flex-row flex-col">
 				<form id="penis" class="w-full my-auto sm:flex-row sm:flex">
 					<div class="flex flex-row my-auto sm:flex-row w-auto sm:w-full sm:ml-auto">
-						<span class="ml-4 my-auto text-2xl font-semibold min-w-28 w-28">Add item:</span>
+						<span class="ml-4 my-auto text-2xl font-semibold min-w-[7.5rem] w-[7.5rem]">Add item:</span>
 						<input
 							type="text"
 							id="name"
@@ -102,20 +102,20 @@
 
 						const name = document.createElement("span");
 						name.textContent = item.name;
-						name.className = "my-auto ml-6 font-semibold text-2xl";
+						name.className = "my-auto ml-4 font-semibold sm:text-2xl text-xl";
 						li.appendChild(name);
 
 						const deleteButton = document.createElement("button");
 						deleteButton.textContent = "Delete";
 						deleteButton.className = "w-6 h-6 mt-[21px] ml-2 p-1";
 						deleteButton.innerHTML = `
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-600 w-full h-full">
-							<path d="M3 6h18" />
-							<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-							<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-							<line x1="10" x2="10" y1="11" y2="17" />
-							<line x1="14" x2="14" y1="11" y2="17" />
-							</svg>`;
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-600 w-full h-full">
+										<path d="M3 6h18" />
+										<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+										<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+										<line x1="10" x2="10" y1="11" y2="17" />
+										<line x1="14" x2="14" y1="11" y2="17" />
+										</svg>`;
 						deleteButton.addEventListener("click", () => {
 							const index = items.indexOf(item);
 							if (index > -1) {
@@ -127,7 +127,8 @@
 						li.appendChild(deleteButton);
 
 						const time = document.createElement("span");
-						time.className = "bg-zinc-950 rounded-xl my-auto py-2 px-4 ml-auto mr-4 font-bold text-2xl";
+						time.className =
+							"bg-zinc-950 rounded-xl my-auto py-2 px-4 ml-auto mr-2 sm:mr-4 font-bold sm:text-2xl text-xl";
 						time.textContent = format(item.itime);
 						time.title = format(item.itime, true);
 						li.appendChild(time);
@@ -166,30 +167,35 @@
 				url.searchParams.set("imp", data);
 				if (navigator.canShare) {
 					navigator
-						.canShare({ url })
-						.then(() => {
-							navigator.share({ url });
+						.canShare({ url: url.href })
+						.then(async () => {
+							await navigator.share({ url: url.href });
 						})
-						.catch((e) => {
-							alert("Sharing failed: " + e);
-						});
+						.catch((e) => copyshare(url.href));
 				} else {
-					const input = document.createElement("input");
-					input.value = url.href;
-					input.style.position = "absolute";
-					input.style.top = "-9999px";
-					input.style.left = "-9999px";
-					input.style.width = "1px";
-					input.style.height = "1px";
-					input.style.opacity = "0";
-					document.body.appendChild(input);
-					input.select();
-					document.execCommand("copy");
-					document.body.removeChild(input);
-					alert("Copied share URL to clipboard");
+					try {
+						navigator.share({ url: url.href }).catch(() => copyshare(url.href));
+					} catch (e) {
+						copyshare(url.href);
+					}
 				}
 			}
 
+			function copyshare(url) {
+				const input = document.createElement("input");
+				input.value = url;
+				input.style.position = "absolute";
+				input.style.top = "-9999px";
+				input.style.left = "-9999px";
+				input.style.width = "1px";
+				input.style.height = "1px";
+				input.style.opacity = "0";
+				document.body.appendChild(input);
+				input.select();
+				document.execCommand("copy");
+				document.body.removeChild(input);
+				alert("Copied share URL to clipboard");
+			}
 			/** @type {HTMLInputElement} */
 			const nameInput = document.getElementById("name");
 			/** @type {HTMLInputElement} */
@@ -260,3 +266,4 @@
 		</script>
 	</body>
 </html>
+
