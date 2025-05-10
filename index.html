@@ -220,7 +220,7 @@
 					// e.g. 3 mins ago
 					if (now.getFullYear() - date.getFullYear() > 0) {
 						return `${now.getFullYear() - date.getFullYear()} years ago`;
-					} else if (now.getMonth() - date.getMonth() > 0) {
+					} else if (now.getMonth() - date.getMonth() > 1) {
 						return `${now.getMonth() - date.getMonth()} months ago`;
 					} else if (now.getDate() - date.getDate() > 0) {
 						return `${now.getDate() - date.getDate()} days ago`;
@@ -234,8 +234,8 @@
 				} else {
 					// e.g. 3 mins later
 					if (date.getFullYear() - now.getFullYear() > 0) {
-						return `${date.getFullYear() - now.getFullYear()} years`;
-					} else if (date.getMonth() - now.getMonth() > 0) {
+						return `${date.getFullYear() - now.getFullYear()} year` + (date.getFullYear() - now.getFullYear() > 1 ? "s" : "");
+					} else if (date.getMonth() - now.getMonth() > 1) {
 						return `${date.getMonth() - now.getMonth()} months`;
 					} else if (date.getDate() - now.getDate() > 0) {
 						return `${date.getDate() - now.getDate()} days`;
