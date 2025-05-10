@@ -56,10 +56,29 @@
 							value="Add"
 							id="add"
 							class="border-zinc-700 border block my-auto ml-2 py-1 px-3 rounded-lg" />
+						<div
+							class="border-zinc-700 border block my-auto ml-2 p-1 rounded-lg h-[34px] min-w-[34px]"
+							onclick="share()">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="text-zinc-400 h-[18px] w-[18px] mt-[3px] mx-auto">
+								<circle cx="18" cy="5" r="3" />
+								<circle cx="6" cy="12" r="3" />
+								<circle cx="18" cy="19" r="3" />
+								<line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+								<line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
+							</svg>
+						</div>
 					</div>
 				</form>
-				<ul class="max-w-3xl mx-auto" id="l"></ul>
 			</div>
+			<ul class="max-w-[calc(100vw-32px)]" id="l"></ul>
 		</div>
 
 		<script>
@@ -68,9 +87,11 @@
 			/** @type {({ name: string, time: number })[]} */
 			const items = JSON.parse(localStorage.getItem("items")) || [];
 			setInterval(render, 1000);
-			let lastitems = JSON.stringify(items);
+			let lastitems = "";
+			render();
 			function render() {
 				if (lastitems === JSON.stringify(items)) return;
+				lastitems = JSON.stringify(items);
 				list.innerHTML = "";
 				items
 					.sort((a, b) => a.time - b.time)
@@ -123,7 +144,7 @@
 						.split("|")
 						.map((e) => {
 							const f = e.split(",");
-							return { name: atob(f[0]), itime: f[1] };
+							return { name: atob(f[0]), itime: Number(f[1]) };
 						});
 					if (confirm("Import " + data.length + " items?"))
 						data.forEach((item) => {
