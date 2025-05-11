@@ -226,11 +226,13 @@
 				if (date.getTime() < Date.now()) {
 					const diff = Date.now() - date.getTime();
 					// e.g. 3 mins ago
-if (diff / 1000 / 60 / 60 / 24 > 1) {
+if (diff / 1000 / 60 / 60 / 24 > 2) {
 						return `${Math.floor(diff / 1000 / 60 / 60 / 24)} days ago`;
 					} else if (diff / 1000 / 60 / 60 > 2) {
+						if (Math.floor(diff / 1000 / 60 / 60) === 1) return `1 hour ago`;
 						return `${Math.floor(diff / 1000 / 60 / 60)} hours ago`;
 					} else if (diff / 1000 / 60 > 2) {
+						if (Math.floor(diff / 1000 / 60) === 1) return `1 minute ago`;
 						return `${Math.floor(diff / 1000 / 60)} minutes ago`;
 					} else {
 						return "Now";
@@ -238,12 +240,14 @@ if (diff / 1000 / 60 / 60 / 24 > 1) {
 				} else {
 					const diff = date.getTime() - Date.now();
 					// e.g. in 3 mins
-					if (diff / 1000 / 60 / 60 / 24 > 1) {
-						return `in ${Math.floor(diff / 1000 / 60 / 60 / 24)} days`;
-					} else if (diff / 1000 / 60 / 60 > 2) {
-						return `in ${Math.floor(diff / 1000 / 60 / 60)} hours`;
-					} else if (diff / 1000 / 60 > 2) {
-						return `in ${Math.floor(diff / 1000 / 60)} minutes`;
+					if (diff / 1000 / 60 / 60 / 24 > 2) {
+						return `${Math.floor(diff / 1000 / 60 / 60 / 24)} days`;
+					} else if (diff / 1000 / 60 / 60 > 1) {
+						if (Math.floor(diff / 1000 / 60 / 60) === 1) return `1 hour`;
+						return `${Math.floor(diff / 1000 / 60 / 60)} hours`;
+					} else if (diff / 1000 / 60 > 1) {
+						if (Math.floor(diff / 1000 / 60) === 1) return `1 minute`;
+						return `${Math.floor(diff / 1000 / 60)} minutes`;
 					} else {
 						return "Now";
 					}
