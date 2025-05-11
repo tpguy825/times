@@ -230,7 +230,7 @@ if (diff / 1000 / 60 / 60 / 24 > 2) {
 						return `${Math.floor(diff / 1000 / 60 / 60 / 24)} days ago`;
 					} else if (diff / 1000 / 60 / 60 > 2) {
 						if (Math.floor(diff / 1000 / 60 / 60) === 1) return `1 hour ago`;
-						return `${Math.floor(diff / 1000 / 60 / 60)} hours ago`;
+						return `${Math.ceil(diff / 1000 / 60 / 60)} hours ago`;
 					} else if (diff / 1000 / 60 > 2) {
 						if (Math.floor(diff / 1000 / 60) === 1) return `1 minute ago`;
 						return `${Math.floor(diff / 1000 / 60)} minutes ago`;
@@ -244,7 +244,7 @@ if (diff / 1000 / 60 / 60 / 24 > 2) {
 						return `${Math.floor(diff / 1000 / 60 / 60 / 24)} days`;
 					} else if (diff / 1000 / 60 / 60 > 1) {
 						if (Math.floor(diff / 1000 / 60 / 60) === 1) return `1 hour`;
-						return `${Math.floor(diff / 1000 / 60 / 60)} hours`;
+						return `${Math.ceil(diff / 1000 / 60 / 60)} hours`;
 					} else if (diff / 1000 / 60 > 1) {
 						if (Math.floor(diff / 1000 / 60) === 1) return `1 minute`;
 						return `${Math.floor(diff / 1000 / 60)} minutes`;
