@@ -150,6 +150,7 @@
 					.join("|");
 				const url = new URL(location.href);
 				url.searchParams.set("imp", data);
+				console.log(url.href);
 				if (navigator.canShare) {
 					try {
 						if (navigator.canShare({ url: url.href })) {
@@ -158,7 +159,10 @@
 							copyshare(url.href);
 						}
 					} catch (e) {
-						copyshare(url.href);
+						if (e.message !== "The operation was aborted") {
+							console.error(e);
+							copyshare(url.href);
+						}
 					}
 				} else {
 					try {
@@ -220,38 +224,30 @@
 				const date = new Date(time);
 				const now = new Date();
 				if (date.getTime() < Date.now()) {
+					const diff = Date.now() - date.getTime();
 					// e.g. 3 mins ago
-					if (now.getFullYear() - date.getFullYear() > 0) {
-						return `${now.getFullYear() - date.getFullYear()} years ago`;
-					} else if (now.getMonth() - date.getMonth() > 1) {
-						return `${now.getMonth() - date.getMonth()} months ago`;
-					} else if (now.getDate() - date.getDate() > 0) {
-						return `${now.getDate() - date.getDate()} days ago`;
-					} else if (now.getHours() - date.getHours() > 0) {
-						return `${now.getHours() - date.getHours()} hours ago`;
-					} else if (now.getMinutes() - date.getMinutes() > 0) {
-						return `${now.getMinutes() - date.getMinutes()} minutes ago`;
+					if (diff / 1000 / 60 / 60 / 24 / 30 > 1) {
+						return `${Math.floor(diff / 1000 / 60 / 60 / 24 / 30)} months ago`;
+					} else if (diff / 1000 / 60 / 60 / 24 > 1) {
+						return `${Math.floor(diff / 1000 / 60 / 60 / 24)} days ago`;
+					} else if (diff / 1000 / 60 / 60 > 1) {
+						return `${Math.floor(diff / 1000 / 60 / 60)} hours ago`;
+					} else if (diff / 1000 / 60 > 1) {
+						return `${Math.floor(diff / 1000 / 60)} minutes ago`;
 					} else {
 						return "Now";
 					}
 				} else {
-					// e.g. 3 mins later
-					if (date.getFullYear() - now.getFullYear() > 0) {
-						return `${date.getFullYear() - now.getFullYear()} year` + (date.getFullYear() - now.getFullYear() > 1 ? "s" : "");
-					} else if (date.getMonth() - now.getMonth() > 1) {
-						return `${date.getMonth() - now.getMonth()} months`;
-					} else if (date.getMonth() - now.getMonth() === 1) {
-						const days = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes()).getTime();
-						const days2 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes()).getTime();
-						const daysm = (days - days2) / 1000 / 60 / 60 / 24;
-						if (daysm < 2) return `${Math.floor(daysm * 24)} days`;
-						return `${Math.floor(daysm)} days`;
-					} else if ((date.getDate()) - now.getDate() > 0) {
-						return `${date.getDate() - now.getDate()} days`;
-					} else if (date.getHours() - now.getHours() > 0) {
-						return `${date.getHours() - now.getHours()} hours`;
-					} else if (date.getMinutes() - now.getMinutes() > 0) {
-						return `${date.getMinutes() - now.getMinutes()} minutes`;
+					const diff = date.getTime() - Date.now();
+					// e.g. in 3 mins
+					if (diff / 1000 / 60 / 60 / 24 / 30 > 1) {
+						return `in ${Math.floor(diff / 1000 / 60 / 60 / 24 / 30)} months`;
+					} else if (diff / 1000 / 60 / 60 / 24 > 1) {
+						return `in ${Math.floor(diff / 1000 / 60 / 60 / 24)} days`;
+					} else if (diff / 1000 / 60 / 60 > 1) {
+						return `in ${Math.floor(diff / 1000 / 60 / 60)} hours`;
+					} else if (diff / 1000 / 60 > 1) {
+						return `in ${Math.floor(diff / 1000 / 60)} minutes`;
 					} else {
 						return "Now";
 					}
