@@ -131,7 +131,7 @@
 						.split("|")
 						.map((e) => {
 							const f = e.split(",");
-							return { name: atob(f[0]), itime: Number(f[1]) };
+							return { name: atob(f[0]), itime: Number(f[1]) * 1000 * 60 };
 						});
 					if (confirm("Import " + data.length + " items?"))
 						data.forEach((item) => {
@@ -146,7 +146,7 @@
 			async function share() {
 				const data = items
 					.map((item) => {
-						return [btoa(item.name), item.itime].join(",");
+						return [btoa(item.name), item.itime /1000 / 60].join(",");
 					})
 					.join("|");
 				const url = new URL(location.href);
